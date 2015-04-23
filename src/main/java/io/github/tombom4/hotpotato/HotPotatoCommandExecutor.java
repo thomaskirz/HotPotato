@@ -26,9 +26,7 @@ public class HotPotatoCommandExecutor implements CommandExecutor {
                 if (plugin.getServer().getOnlinePlayers().size() > 1) {
                     try {
                         new StartCountDownTask(this.plugin, Integer.parseInt(args[0])).runTaskTimer(this.plugin, 0, 20);
-                        for (Player p : this.plugin.getServer().getOnlinePlayers()) {
-                            StartCountDownTask.game.addPossiblePlayer(p);
-                        }
+                        plugin.getServer().getOnlinePlayers().forEach(plugin.game::addPossiblePlayer);
                         return true;
                     } catch (NumberFormatException e) {
                         cs.sendMessage(PREFIX_1 + "Bitte gib eine gültige Zahl ein!");
@@ -45,7 +43,7 @@ public class HotPotatoCommandExecutor implements CommandExecutor {
             if (args.length == 0) {
                 if (cs instanceof Player) {
                     Player sender = (Player) cs;
-                    MongoStats.stats(sender);
+                    plugin.mongoStats.stats(sender);
                     return true;
                 } else {
                     cs.sendMessage(PREFIX_1 + "Only players can use this command with no arguments");
@@ -54,7 +52,7 @@ public class HotPotatoCommandExecutor implements CommandExecutor {
             } else if (args.length == 1) {
                 try {
                     Player player = Bukkit.getPlayer(args[0]);
-                    MongoStats.stats(cs, player);
+                    plugin.mongoStats.stats(cs, player);
                 } catch (NullPointerException e) {
                     cs.sendMessage(PREFIX_1 + "Dieser Spieler wurde nicht gefunden!");
                 }

@@ -4,10 +4,11 @@ import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
 /**
+ *
  * Created by Thomas on 16.03.2015.
  */
 public class DeathCountownTask extends BukkitRunnable {
-    private final HotPotatoPlugin plugin;
+    private HotPotatoPlugin plugin;
     private int counter;
 
     public DeathCountownTask(HotPotatoPlugin plugin, int counter) {
@@ -18,15 +19,15 @@ public class DeathCountownTask extends BukkitRunnable {
     @Override
     public void run() {
         if (counter > 0) {
-            for (Player p : StartCountDownTask.game.getPossiblePlayers()) {
+            for (Player p : plugin.game.getPossiblePlayers()) {
                 p.setLevel(counter);
             }
             counter--;
         } else {
-            for (Player p : StartCountDownTask.game.getPossiblePlayers()) {
+            for (Player p : plugin.game.getPossiblePlayers()) {
                 p.setLevel(0);
             }
-            StartCountDownTask.game.explode(StartCountDownTask.game.getPotatoPlayer());
+            plugin.game.explode(plugin.game.getPotatoPlayer());
             this.cancel();
 
         }

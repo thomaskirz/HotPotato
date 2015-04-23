@@ -11,11 +11,10 @@ import static io.github.tombom4.hotpotato.Game.PREFIX_1;
 public class StartCountDownTask extends BukkitRunnable {
     private HotPotatoPlugin plugin;
     private int counter;
-    public static Game game;
 
     public StartCountDownTask(HotPotatoPlugin plugin, int counter) {
         this.plugin = plugin;
-        game = new Game(plugin);
+        plugin.game = new Game(plugin);
         if (counter < 1) {
             throw new IllegalArgumentException("counter must be greater than 0");
         } else {
@@ -30,7 +29,7 @@ public class StartCountDownTask extends BukkitRunnable {
         } else {
             plugin.getServer().broadcastMessage(PREFIX_1 + "Das Spiel hat begonnen.");
             this.cancel();
-            game.startNewRound(this.plugin);
+            plugin.game.startNewRound(this.plugin);
         }
     }
 

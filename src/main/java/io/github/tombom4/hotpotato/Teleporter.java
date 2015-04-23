@@ -22,10 +22,16 @@ import static io.github.tombom4.hotpotato.Game.PREFIX_2;
  */
 public class Teleporter implements CommandExecutor, Listener {
     static HashMap<List<Integer>, Location> teleporters = new HashMap<>();
+    private HotPotatoPlugin plugin;
+
+    public Teleporter(HotPotatoPlugin plugin) {
+        this.plugin = plugin;
+    }
 
     public boolean onCommand(CommandSender cs, Command cmd, String label, String[] args) {
         if (cmd.getName().equalsIgnoreCase("teleporter")) {
             if (cs instanceof Player) {
+                plugin.getServer().getPluginManager().registerEvents(this, plugin);
                 Player p = ((Player) cs);
                 List<Integer> locFirst;
                 Location locSecond;

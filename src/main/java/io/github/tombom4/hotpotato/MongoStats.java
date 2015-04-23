@@ -18,23 +18,25 @@ import static io.github.tombom4.hotpotato.Game.PREFIX_1;
  * @author TomBom4
  */
 public class MongoStats {
-    static MongoCollection<Document> collection;
+    private MongoCollection<Document> collection;
+    private HotPotatoPlugin plugin;
 
-    public static void initializeDatabase() {
-        collection = HotPotatoPlugin.collection;
+    public MongoStats(MongoCollection<Document> collection, HotPotatoPlugin plugin) {
+        this.collection = collection;
+        this.plugin = plugin;
     }
 
     /**
      * Increments the wins counter when a player wins
      * @param p Player that won
      */
-    public static void addWin(Player p) {
+    public void addWin(Player p) {
         String uuid = p.getUniqueId().toString();
         Document record = new Document("$inc", new Document("wins", 1));
 
         Bson filter = eq("_id", uuid);
 
-        ArrayList<Document> list = collection.find(filter).into(new ArrayList<Document>());
+        ArrayList<Document> list = collection.find(filter).into(new ArrayList<>());
 
         if (list.size() < 0) {
             collection.insertOne(record);
@@ -46,7 +48,7 @@ public class MongoStats {
         }
     }
 
-    public static void stats(CommandSender cs, Player p) {
+    public void stats(CommandSender cs, Player p) {
         Bson filter = eq("_id", p.getUniqueId().toString());
         Document doc = collection.find(filter).first();
         int wins = doc.getInteger("wins");
@@ -54,14 +56,14 @@ public class MongoStats {
         cs.sendMessage(ChatColor.GREEN + "Wins: " + ChatColor.YELLOW + wins);
     }
 
-    public static void stats(Player p) {
+    public void stats(Player p) {
         stats(p, p);
     }
 
     /**
      * Creates a stats document in the database for a player (if it doesn't exist) on login *
      */
-    public static void statsInitializer(Player p) {
+    public void statsInitializer(Player p) {
         String uuid = p.getUniqueId().toString();
         Bson filter = eq("_id", uuid);
         long counter = collection.count(filter);

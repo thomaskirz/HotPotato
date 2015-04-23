@@ -16,3 +16,6 @@ commands:
   Teleporter:
     description: Adds a teleporter to the world.
     usage: /teleporter [<x> <y> <z>] <x> <y> <z>
+  GenerateArena:
+    description: Generates a glass hemisphere with a given radius
+    usage: /generatearena <radius>

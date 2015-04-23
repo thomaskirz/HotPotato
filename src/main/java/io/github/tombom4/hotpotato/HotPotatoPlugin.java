@@ -12,21 +12,24 @@ import org.bukkit.plugin.java.JavaPlugin;
  * @author TomBom4
  */
 public class HotPotatoPlugin extends JavaPlugin {
-    public static MongoClient client;
-    public static MongoDatabase database;
-    public static MongoCollection<Document> collection;
+    public MongoClient client;
+    public MongoDatabase database;
+    public MongoCollection<Document> collection;
+    public MongoStats mongoStats;
+    public Game game;
 
     @Override
     public void onEnable() {
         client = new MongoClient(new MongoClientURI(Resources.MongoURI));
         database = client.getDatabase("hotpotato-stats");
         collection = database.getCollection("players");
+        mongoStats = new MongoStats(collection, this);
+
         getCommand("HotPotato").setExecutor(new HotPotatoCommandExecutor(this));
         getCommand("wins").setExecutor(new HotPotatoCommandExecutor(this));
-        getCommand("teleporter").setExecutor(new Teleporter());
-        MongoStats.initializeDatabase();
-        getServer().getPluginManager().registerEvents(new PlayerEventListener(), this);
-        getServer().getPluginManager().registerEvents(new Teleporter(), this);
+        getCommand("teleporter").setExecutor(new Teleporter(this));
+        getCommand("generatearena").setExecutor(new ArenaGenerator(this));
+        getServer().getPluginManager().registerEvents(new PlayerEventListener(this), this);
     }
 
     @Override

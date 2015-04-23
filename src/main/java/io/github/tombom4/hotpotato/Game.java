@@ -2,14 +2,15 @@ package io.github.tombom4.hotpotato;
 
 import org.bukkit.*;
 import org.bukkit.entity.Player;
-import org.bukkit.event.HandlerList;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.potion.PotionEffectType;
 
 import java.util.ArrayList;
-import java.util.EventListener;
 import java.util.List;
 import java.util.Random;
 
@@ -17,7 +18,7 @@ import java.util.Random;
  * Important methods for the game
  * @author TomBom4
  */
-public class Game implements EventListener {
+public class Game implements Listener {
     private HotPotatoPlugin plugin;
     private List<Player> possiblePlayers = new ArrayList<>();
     private Player potatoPlayer;
@@ -76,7 +77,7 @@ public class Game implements EventListener {
             p.getInventory().clear();
         }
 
-        plugin.getServer().getPluginManager().registerEvents(new PlayerEventListener(), plugin);
+        plugin.getServer().getPluginManager().registerEvents(this, plugin);
 
         this.potatoPlayer = getRandomPlayer();
         setPotatoPlayer(this.potatoPlayer);
@@ -103,11 +104,24 @@ public class Game implements EventListener {
             startNewRound(plugin);
         } else {
             Player winner = possiblePlayers.get(0);
-            MongoStats.addWin(winner);
+            plugin.mongoStats.addWin(winner);
             plugin.getServer().broadcastMessage(PREFIX_2 + winner.getName() + ChatColor.GREEN + " hat gewonnen.");
-            HandlerList.unregisterAll(new PlayerEventListener());
             Bukkit.getScheduler().cancelAllTasks();
             plugin.getServer().broadcastMessage(PREFIX_1 + "Das Spiel ist beendet");
+        }
+    }
+
+    @EventHandler
+    @SuppressWarnings("unused")
+    public void PlayerGetDamageListener(EntityDamageByEntityEvent evt) {
+        evt.setCancelled(true);
+        if (evt.getDamager() instanceof Player && evt.getEntity() instanceof Player) {
+            Player player = (Player) evt.getEntity();
+            Player damager = (Player) evt.getDamager();
+            if (damager.getName().equalsIgnoreCase(plugin.game.getPotatoPlayer().getName())/* && itemName.equalsIgnoreCase("§4Hot Potato")*/) {
+                plugin.game.setPotatoPlayer(player);
+                damager.getInventory().clear();
+            }
         }
     }
 }
