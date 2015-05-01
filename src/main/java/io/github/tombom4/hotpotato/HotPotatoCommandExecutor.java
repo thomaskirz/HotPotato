@@ -1,6 +1,5 @@
 package io.github.tombom4.hotpotato;
 
-import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -9,12 +8,21 @@ import org.bukkit.entity.Player;
 import static io.github.tombom4.hotpotato.Game.PREFIX_1;
 
 /**
+ * Main Command executor
  *
- *
+ * @author TomBom4
  */
 public class HotPotatoCommandExecutor implements CommandExecutor {
+    /**
+     * Plugin main class
+     */
     HotPotatoPlugin plugin;
 
+    /**
+     * Constructor
+     *
+     * @param plugin Plugin main class
+     */
     public HotPotatoCommandExecutor(HotPotatoPlugin plugin) {
         this.plugin = plugin;
     }
@@ -40,22 +48,27 @@ public class HotPotatoCommandExecutor implements CommandExecutor {
             }
             return false;
         } else if (cmd.getName().equalsIgnoreCase("wins")) {
-            if (args.length == 0) {
-                if (cs instanceof Player) {
-                    Player sender = (Player) cs;
-                    plugin.mongoStats.stats(sender);
-                    return true;
-                } else {
-                    cs.sendMessage(PREFIX_1 + "Only players can use this command with no arguments");
+            if (plugin.useStats) {
+                if (args.length == 0) {
+                    if (cs instanceof Player) {
+                        Player sender = (Player) cs;
+                        plugin.mongoStats.stats(sender);
+                        return true;
+                    } else {
+                        cs.sendMessage(PREFIX_1 + "Only players can use this command with no arguments");
+                        return true;
+                    }
+                } else if (args.length == 1) {
+                    String uuid = plugin.mongoStats.hasEntry(args[0]);
+                    if (uuid != null) {
+                        plugin.mongoStats.stats(cs, uuid);
+                    } else {
+                        cs.sendMessage(PREFIX_1 + "Dieser Spieler hat noch nie gespielt.");
+                    }
                     return true;
                 }
-            } else if (args.length == 1) {
-                try {
-                    Player player = Bukkit.getPlayer(args[0]);
-                    plugin.mongoStats.stats(cs, player);
-                } catch (NullPointerException e) {
-                    cs.sendMessage(PREFIX_1 + "Dieser Spieler wurde nicht gefunden!");
-                }
+            } else {
+                cs.sendMessage(PREFIX_1 + "Statistics are disabled");
                 return true;
             }
         }

@@ -7,6 +7,7 @@ import static io.github.tombom4.hotpotato.Game.PREFIX_1;
 
 /**
  * @author TomBom4
+ * Starts the countdown before a game
  */
 public class StartCountDownTask extends BukkitRunnable {
     private HotPotatoPlugin plugin;
@@ -29,7 +30,7 @@ public class StartCountDownTask extends BukkitRunnable {
         } else {
             plugin.getServer().broadcastMessage(PREFIX_1 + "Das Spiel hat begonnen.");
             this.cancel();
-            plugin.game.startNewRound(this.plugin);
+            plugin.game.startNewRound();
         }
     }
 

@@ -2,9 +2,7 @@ package io.github.tombom4.hotpotato;
 
 import org.bukkit.*;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -16,13 +14,26 @@ import java.util.Random;
 
 /**
  * Important methods for the game
+ *
  * @author TomBom4
  */
 public class Game implements Listener {
+    /**
+     * The plugin main class
+     */
     private HotPotatoPlugin plugin;
+    /**
+     * List of the players that may become potatoPlayer in the next game
+     */
     private List<Player> possiblePlayers = new ArrayList<>();
+    /**
+     * Player having the potato
+     */
     private Player potatoPlayer;
 
+    /**
+     * Chat prefixes
+     */
     public static final String PREFIX_1 = ChatColor.RED + "[HotPotato] " + ChatColor.GREEN;
     public static final String PREFIX_2 = ChatColor.RED + "[HotPotato] " + ChatColor.YELLOW;
 
@@ -66,14 +77,15 @@ public class Game implements Listener {
         inv.addItem(potato);
     }
 
-    public void startNewRound(HotPotatoPlugin plugin) {
+    /**
+     * Starts a new game with the players that are left over
+     */
+    public void startNewRound() {
         for (Player p : possiblePlayers) {
-//            plugin.getServer().getPluginManager().registerEvents(new Trap(), plugin);
             p.setGameMode(GameMode.ADVENTURE);
             p.setHealth(20);
             p.setSaturation(1000000);
             p.setAllowFlight(false);
-//            p.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 10000000, 2, true, false));
             p.getInventory().clear();
         }
 
@@ -84,7 +96,11 @@ public class Game implements Listener {
         new DeathCountownTask(plugin, 25).runTaskTimer(plugin, 0, 20);
     }
 
-    public void explode(Player p) {
+    /**
+     * Lets the potatoPlayer die with an explosion effect
+     */
+    public void explode() {
+        Player p = potatoPlayer;
         Location loc = p.getLocation();
         World world = loc.getWorld();
         world.createExplosion(loc, 0f);
@@ -101,27 +117,13 @@ public class Game implements Listener {
             plugin.getServer().getScheduler().cancelAllTasks();
             plugin.getServer().broadcastMessage(PREFIX_2 + potatoPlayer.getName() + ChatColor.GREEN + " ist ausgeschieden!");
             plugin.getServer().broadcastMessage(PREFIX_1 + "Eine neue Runde beginnt!");
-            startNewRound(plugin);
+            startNewRound();
         } else {
             Player winner = possiblePlayers.get(0);
             plugin.mongoStats.addWin(winner);
             plugin.getServer().broadcastMessage(PREFIX_2 + winner.getName() + ChatColor.GREEN + " hat gewonnen.");
             Bukkit.getScheduler().cancelAllTasks();
             plugin.getServer().broadcastMessage(PREFIX_1 + "Das Spiel ist beendet");
-        }
-    }
-
-    @EventHandler
-    @SuppressWarnings("unused")
-    public void PlayerGetDamageListener(EntityDamageByEntityEvent evt) {
-        evt.setCancelled(true);
-        if (evt.getDamager() instanceof Player && evt.getEntity() instanceof Player) {
-            Player player = (Player) evt.getEntity();
-            Player damager = (Player) evt.getDamager();
-            if (damager.getName().equalsIgnoreCase(plugin.game.getPotatoPlayer().getName())/* && itemName.equalsIgnoreCase("§4Hot Potato")*/) {
-                plugin.game.setPotatoPlayer(player);
-                damager.getInventory().clear();
-            }
         }
     }
 }

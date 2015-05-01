@@ -18,9 +18,14 @@ import static io.github.tombom4.hotpotato.Game.PREFIX_1;
 import static io.github.tombom4.hotpotato.Game.PREFIX_2;
 
 /**
- * Implement a command specifying blocks that teleport players to another block when they run over it
+ * Implements "teleporters": When a player moves to a location, it is teleported to another location
  */
 public class Teleporter implements CommandExecutor, Listener {
+
+    /**
+     * A HashMap storing the locations of the teleporters and the locations where the players are teleported.
+     * The coordinates of the teleporter are a List with 3 Integers. This List may be changed to a Location sometime.
+     */
     static HashMap<List<Integer>, Location> teleporters = new HashMap<>();
     private HotPotatoPlugin plugin;
 
@@ -72,7 +77,6 @@ public class Teleporter implements CommandExecutor, Listener {
         return false;
     }
 
-    @SuppressWarnings("unused")
     @EventHandler
     public void playerMoveListener(PlayerMoveEvent evt) {
         Player p = evt.getPlayer();
@@ -82,7 +86,8 @@ public class Teleporter implements CommandExecutor, Listener {
                 loc.getBlockZ());
 
         if (teleporters.containsKey(locFirst)) {
-            p.teleport(teleporters.get(locFirst));}
+            p.teleport(teleporters.get(locFirst));
+        }
 
     }
 }

@@ -4,8 +4,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
 /**
+ * Implements the countdown until the death of HotPotatoPlayer
  *
- * Created by Thomas on 16.03.2015.
+ * @author TomBom4
  */
 public class DeathCountownTask extends BukkitRunnable {
     private HotPotatoPlugin plugin;
@@ -27,7 +28,7 @@ public class DeathCountownTask extends BukkitRunnable {
             for (Player p : plugin.game.getPossiblePlayers()) {
                 p.setLevel(0);
             }
-            plugin.game.explode(plugin.game.getPotatoPlayer());
+            plugin.game.explode();
             this.cancel();
 
         }

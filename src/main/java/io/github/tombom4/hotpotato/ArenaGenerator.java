@@ -18,24 +18,23 @@ import static io.github.tombom4.hotpotato.Game.PREFIX_1;
 /**
  * Generate an arena of glass with a given radius
  *
- * @author Thomas
- * @version 1.0 23.04.2015
+ * @author TomBom4
  */
 public class ArenaGenerator implements CommandExecutor {
+    /**
+     * Plugin main class
+     */
     public HotPotatoPlugin plugin;
 
     /**
-     * Constructor
+     * Constructor. Initializes plugin field
      *
-     * @param plugin Initialize HotPotatoPlugin field
+     * @param plugin the HotPotatoPlugin
      */
     public ArenaGenerator(HotPotatoPlugin plugin) {
         this.plugin = plugin;
     }
 
-    /**
-     * CommandExecutor
-     */
     public boolean onCommand(CommandSender commandSender, Command cmd, String label, String[] args) {
         if (cmd.getName().equalsIgnoreCase("generatearena")) {
             if (args.length == 1) {
@@ -65,11 +64,11 @@ public class ArenaGenerator implements CommandExecutor {
     }
 
     /**
-     * Generate the hemisphere
+     * Generate the locations of the hemisphere
      *
      * @param center Center of the hemisphere
      * @param radius Radius of the hemisphere
-     * @return An ArrayList of the blocks at the edge of the hemisphere
+     * @return The ArrayList containing the locations of the hemisphere
      */
     public ArrayList<Location> getHemisphereLocations(Location center, int radius) {
         ArrayList<Location> locations = new ArrayList<>();
@@ -85,9 +84,7 @@ public class ArenaGenerator implements CommandExecutor {
                 z1 = center.getBlockZ() - radius,
                 z2 = center.getBlockZ() + radius;
 
-        /**
-         * Iterate through the sphere
-         */
+        // Iterate through the sphere
         for (int x = x1; x <= x2; x++) {
             for (int y = y1; y <= y2; y++) {
                 for (int z = z1; z <= z2; z++) {

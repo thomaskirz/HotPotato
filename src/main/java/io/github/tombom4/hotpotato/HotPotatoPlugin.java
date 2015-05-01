@@ -1,29 +1,24 @@
 package io.github.tombom4.hotpotato;
 
-import com.mongodb.MongoClient;
-import com.mongodb.MongoClientURI;
-import com.mongodb.client.MongoCollection;
-import com.mongodb.client.MongoDatabase;
-import org.bson.Document;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
 /**
  * Plugin main class
+ *
  * @author TomBom4
  */
 public class HotPotatoPlugin extends JavaPlugin {
-    public MongoClient client;
-    public MongoDatabase database;
-    public MongoCollection<Document> collection;
     public MongoStats mongoStats;
     public Game game;
+    public FileConfiguration config;
+    public boolean useStats = false;
 
     @Override
     public void onEnable() {
-        client = new MongoClient(new MongoClientURI(Resources.MongoURI));
-        database = client.getDatabase("hotpotato-stats");
-        collection = database.getCollection("players");
-        mongoStats = new MongoStats(collection, this);
+        loadConfig();
+        if (useStats = config.getBoolean("UseStats"))
+            mongoStats = new MongoStats(this, config);
 
         getCommand("HotPotato").setExecutor(new HotPotatoCommandExecutor(this));
         getCommand("wins").setExecutor(new HotPotatoCommandExecutor(this));
@@ -32,8 +27,12 @@ public class HotPotatoPlugin extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new PlayerEventListener(this), this);
     }
 
-    @Override
-    public void onDisable() {
-
+    /**
+     * Loads the FileConfiguration
+     */
+    public void loadConfig() {
+        config = getConfig();
+        config.options().copyDefaults(true);
+        saveConfig();
     }
 }

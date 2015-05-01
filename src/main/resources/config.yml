@@ -1,0 +1,4 @@
+# Configure MongoStats
+UseStats: true
+# The MongoURI for connecting to the database. Need help? https://api.mongodb.org/java/2.12/com/mongodb/MongoURI.html
+MongoURI:
